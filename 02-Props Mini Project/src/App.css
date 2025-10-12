@@ -1,0 +1,7 @@
+.card-container{
+    display: flex;
+    color: black;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}

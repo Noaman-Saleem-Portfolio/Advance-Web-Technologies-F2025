@@ -1,0 +1,24 @@
+.card{
+    background-color: #fff;
+    padding: 40px;
+    text-align: center;
+    width: 250px;
+}
+
+.card img{
+    width: 200px;
+    height: 200px;
+    /* object-fit: fill; */
+    border-radius: 50%;
+}
+
+.card button{
+    background-color: black;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.card button:hover{
+    background-color: rgb(104, 103, 103);
+}
