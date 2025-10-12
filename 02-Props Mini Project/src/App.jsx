@@ -28,9 +28,10 @@ function App() {
       <p>This is the best course to learn React</p>
       <h2>Course Content</h2>
       <div className="card-container">
-        {data.map((item) => {
+        {data.map((item, index) => {
           return (
             <Card
+              key={index}
               name={item.name}
               exp={item.exp}
               qualification={item.qualification}
