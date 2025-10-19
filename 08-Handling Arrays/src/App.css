@@ -1,0 +1,18 @@
+.num {
+  font-size: 60px;
+  color: red;
+}
+
+button {
+  margin-right: 20px;
+}
+
+.card {
+  border: 1px solid black;
+  padding: 20px;
+  margin: 20px 0px;
+}
+
+.bg-red {
+  background-color: red;
+}
