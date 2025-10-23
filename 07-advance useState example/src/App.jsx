@@ -66,9 +66,7 @@ function App() {
           value={formData.email}
         />
       </form>
-      {students.map((item, idx) => {
-        return <div className="card">hello</div>;
-      })}
+
       <h1>Name : {formData.username}</h1>
       <h1>Age : {formData.age}</h1>
       <p>Email: {formData.email}</p>
