@@ -9,7 +9,7 @@ const App = () => {
 
   const getData = async () => {
     const response = await axios.get(
-      `https://picsum.photos/v2/list?page=${index}&limit=20`
+      `https://picsum.photos/v2/list?page=${index}&limit=5`
     );
     setUserData(response.data);
   };
@@ -34,7 +34,39 @@ const App = () => {
   }
 
   return (
-    <div style={{ display: "flex", flexWrap: "wrap" }}>{printUserData}</div>
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "40px",
+          justifyContent: "center",
+        }}
+      >
+        {printUserData}
+      </div>
+
+      <button
+        onClick={() => {
+          if (index > 1) {
+            setIndex(index - 1);
+            // setUserData([]);
+          }
+        }}
+      >
+        Prev
+      </button>
+      <h4>Page {index}</h4>
+      <button
+        onClick={() => {
+          // setUserData([]);
+
+          setIndex(index + 1);
+        }}
+      >
+        Next
+      </button>
+    </>
   );
 };
 
