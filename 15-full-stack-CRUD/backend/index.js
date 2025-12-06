@@ -23,7 +23,7 @@ app.use(cors({
 }));
 
 // Optional: Allow all origins (temporary, not recommended for production)
-app.use(cors());
+// app.use(cors());
 
 
 // Middleware
