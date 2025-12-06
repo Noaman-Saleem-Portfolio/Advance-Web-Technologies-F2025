@@ -16,6 +16,8 @@ export const createProduct = async (req, res) => {
         }
 
         let uploadedImageUrl = null;
+        let uploadedImagePublicId = null;
+
         // Upload only if provided
         if (imageUrl) {
             try {
@@ -26,6 +28,7 @@ export const createProduct = async (req, res) => {
                 });
                 console.log(`uploadedResponse Cloudinary = ${upload}`);
                 uploadedImageUrl = upload.secure_url;
+                uploadedImagePublicId = upload.public_id;   // to update and delete from cloudinary
             } catch (uploadErr) {
                 console.error("Cloudinary Upload Error:", uploadErr);
                 return res.status(500).json({
@@ -35,7 +38,7 @@ export const createProduct = async (req, res) => {
             }
         }
 
-        const product = new Product({ ...req.body, imageUrl: uploadedImageUrl })
+        const product = new Product({ ...req.body, imageUrl: uploadedImageUrl, imagePublicId: uploadedImagePublicId })
         await product.save()
 
         res.status(201).json({
@@ -53,13 +56,22 @@ export const createProduct = async (req, res) => {
 // read all products
 export const readAllProducts = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5; // items per page
+        const skip = (page - 1) * limit;
+
+        const totalProducts = await Product.countDocuments();
         const products = await Product.find()
-        const length = products.length
+            .skip(skip)
+            .limit(limit)
+            .sort({ createdAt: -1 }); // optional: newest first
 
         res.status(200).json({
-            message: "All product read from DB",
-            productQty: length,
+            message: "Products fetched",
             products,
+            page,
+            totalPages: Math.ceil(totalProducts / limit),
+            totalProducts,
         })
     } catch (error) {
         console.log(error);
@@ -114,19 +126,48 @@ export const updateProduct = async (req, res) => {
         console.log(req.params);
         const { id } = req.params
 
-        const product = await Product.findByIdAndUpdate(id, { $set: req.body }, { new: true })
+        console.log(req.body);
+
+        const existingProduct = await Product.findById(id)
 
         // findById() returns null when no document matches
         // If no product found
-        if (!product) {
+        if (!existingProduct) {
             return res.status(404).json({
                 message: "No product found with the provided ID"
             });
         }
 
+        let updatedFields = req.body;
+
+        // If a new image is provided from frontend
+        // Only handle new image if user uploaded one
+        if (req.body.newImage) {
+
+            // 1️⃣ Delete old Cloudinary image
+            if (existingProduct.imagePublicId) {
+                await cloudinary.uploader.destroy(existingProduct.imagePublicId);
+            }
+
+            // 2️⃣ Upload new Cloudinary image
+            const upload = await cloudinary.uploader.upload(req.body.newImage, {
+                folder: "products"
+            });
+
+            updatedFields.imageUrl = upload.secure_url;
+            updatedFields.imagePublicId = upload.public_id;
+        }
+
+        // Remove newImage before saving to DB
+        delete updatedFields.newImage;
+
+        const updatedProduct = await Product.findByIdAndUpdate(id, { $set: updatedFields }, { new: true })
+
+
+
         res.status(200).json({
             message: "Product updated Successfully",
-            product
+            product: updatedProduct
         })
 
     } catch (error) {
