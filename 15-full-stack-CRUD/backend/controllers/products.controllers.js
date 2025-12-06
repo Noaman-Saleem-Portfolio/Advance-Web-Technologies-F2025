@@ -1,10 +1,13 @@
 import Product from "../models/products.model.js"
+import { v2 as cloudinary } from 'cloudinary';
+
 
 // create product
 export const createProduct = async (req, res) => {
     try {
         console.log(req.body);
         const { name, price } = req.body
+        let { imageUrl } = req.body
 
         if (!name || !price) {
             return res.status(400).json({
@@ -12,7 +15,27 @@ export const createProduct = async (req, res) => {
             })
         }
 
-        const product = new Product(req.body)
+        let uploadedImageUrl = null;
+        // Upload only if provided
+        if (imageUrl) {
+            try {
+                const upload = await cloudinary.uploader.upload(imageUrl, {
+                    folder: "products",
+                    resource_type: "image",
+                    max_file_size: 2_000_000, // 2MB
+                });
+                console.log(`uploadedResponse Cloudinary = ${upload}`);
+                uploadedImageUrl = upload.secure_url;
+            } catch (uploadErr) {
+                console.error("Cloudinary Upload Error:", uploadErr);
+                return res.status(500).json({
+                    message: "Image upload failed",
+                    error: uploadErr.message
+                });
+            }
+        }
+
+        const product = new Product({ ...req.body, imageUrl: uploadedImageUrl })
         await product.save()
 
         res.status(201).json({

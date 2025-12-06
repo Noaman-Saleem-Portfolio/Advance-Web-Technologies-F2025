@@ -9,8 +9,13 @@ const productSchame = mongoose.Schema({
         type: Number,
         required: true
     },
-    desc: {
-        type: String
+    quantity: {
+        type: Number,
+        // default: 0
+    },
+    description: {
+        type: String,
+        // default: "No description available"
     },
     imageUrl: {
         type: String

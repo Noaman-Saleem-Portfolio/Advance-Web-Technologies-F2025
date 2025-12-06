@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
-import axios from "axios"
 import { useNavigate } from "react-router"
+
+import api from "../../../api/axios"
 
 const AddProduct = () => {
     const [formData, setFormData] = useState({
         name: "",
         price: "",
-        quantity: "",
+        quantity: 0,
+        description: "No description available",
         imageUrl: ""
     })
     const [isError, setIsError] = useState(false)
@@ -25,16 +27,32 @@ const AddProduct = () => {
     const handleSubmit = async () => {
         try {
             console.log(formData);
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/products`, formData);
+            const res = await api.post("/products", formData);
             console.log("Product created:", res.data);
             navigate("/admin/products")
         } catch (error) {
             // console.error("Error creating product:", error);
             // console.error("Error creating product:", error.message);
-            console.error("Error creating product:", error.response.data.message);
-            setIsError(error.response.data.message)
+
+            console.error("Error creating product:", error?.response?.data?.message);
+            setIsError(error?.response?.data?.message || "Something went wrong");
         }
     }
+
+    const handleImgChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                // setImg(reader.result);
+                setFormData(prev => ({
+                    ...prev,
+                    imageUrl: reader.result   // <-- update form data
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     return (
         <div className="flex justify-center">
@@ -52,10 +70,14 @@ const AddProduct = () => {
                 <label className="label">Product Quantity</label>
                 <input name="quantity" type="number" className="input w-full" onChange={(e) => handleFormData(e)} />
 
-                <label className="label">Image URL</label>
-                <input name="imageUrl" type="text" className="input w-full" onChange={(e) => handleFormData(e)} />
+                <label className="label">Product Description</label>
+                <input name="description" type="text" className="input w-full" onChange={(e) => handleFormData(e)} />
 
+                {/* <label className="label">Image URL</label>
+                <input name="imageUrl" type="text" className="input w-full" onChange={(e) => handleFormData(e)} /> */}
 
+                <label className="label">Pick a Image</label>
+                <input type="file" accept=".jpg,.jpeg,.png" className="file-input" onChange={handleImgChange} />
 
                 <button className="btn btn-neutral mt-4" onClick={handleSubmit}>Create Product</button>
             </fieldset>
@@ -64,3 +86,16 @@ const AddProduct = () => {
 }
 
 export default AddProduct
+
+
+
+// const formData = new FormData();
+// formData.append("file", file);
+// formData.append("upload_preset", "your_unsigned_preset");
+
+// const upload = await axios.post(
+//   "https://api.cloudinary.com/v1_1/<cloud_name>/image/upload",
+//   formData
+// );
+
+// const imageUrl = upload.data.secure_url;

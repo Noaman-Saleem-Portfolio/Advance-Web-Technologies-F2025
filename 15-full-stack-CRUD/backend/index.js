@@ -1,13 +1,20 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv";
-
-
+import { v2 as cloudinary } from 'cloudinary';
 
 import productRoutes from "./routes/products.routes.js"
 import connectDB from "./database/database.js"
 
 dotenv.config();
+
+// cloudinary config
+// Configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 
 const app = express()
@@ -27,7 +34,9 @@ app.use(cors({
 
 
 // Middleware
-app.use(express.json())
+// app.use(express.json())
+app.use(express.json({ limit: "10mb" }));
+// app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use("/api", productRoutes)
 
 app.listen(process.env.PORT, () => {
