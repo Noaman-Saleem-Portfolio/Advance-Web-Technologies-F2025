@@ -4,6 +4,7 @@ import Dashboard from "./pages/admin/dashboard/Dashboard"
 import Products from "./pages/admin/products/Products"
 import Users from "./pages/admin/users/Users"
 import Stats from "./pages/admin/stats/Stats"
+import AddProduct from "./pages/admin/products/AddProduct"
 
 import Home from "./pages/user/home/Home"
 
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="stats" element={<Stats />} />
         <Route path="products" element={<Products />} />
         <Route path="users" element={<Users />} />
+        <Route path="add-product" element={<AddProduct />} />
       </Route>
     </Routes>
   )
