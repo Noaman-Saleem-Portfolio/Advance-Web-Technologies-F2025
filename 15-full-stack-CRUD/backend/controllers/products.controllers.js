@@ -203,6 +203,21 @@ export const deleteProduct = async (req, res) => {
             });
         }
 
+
+        // ❌ 3. If Cloudinary fail to delete, you should still delete the database product
+        // Right now if Cloudinary fails, your controller stops and the database product never gets deleted.
+        // Better approach → wrap Cloudinary delete in try/catch:
+        try {
+            // ❌ 1. You must check if product.imagePublicId exists before deleting
+            // If imagePublicId is missing or empty, Cloudinary returns an error:
+            if (product.imagePublicId) {
+                await cloudinary.uploader.destroy(product.imagePublicId);
+            }
+        } catch (error) {
+            console.error("Cloudinary deletion error:", cloudErr);
+            // continue — do not stop product deletion
+        }
+
         await Product.findByIdAndDelete(id)
 
         res.status(200).json({
