@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* @plugin "daisyui"; */
+@plugin "daisyui" {
+    themes: light --default, dark --prefersdark, emerald;
+}
+
+/* tailwind.css */
+@layer components {
+    .app-container {
+        @apply container mx-auto px-4;
+    }
+}
