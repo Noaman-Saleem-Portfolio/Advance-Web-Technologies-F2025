@@ -3,7 +3,7 @@ import api from "./api/axios"
 import { Toaster } from "react-hot-toast";
 
 
-/* ===== ADMIN COMPONENTS ===== */
+/* ===== ADMIN COMPONENTS =====- */
 import Dashboard from "./pages/admin/dashboard/Dashboard"
 import Products from "./pages/admin/products/Products"
 import Users from "./pages/admin/users/Users"
