@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from "react-router"
 import api from "./api/axios"
+import { Toaster } from "react-hot-toast";
+
 
 /* ===== ADMIN COMPONENTS ===== */
 import Dashboard from "./pages/admin/dashboard/Dashboard"
@@ -20,14 +22,16 @@ import UserLayout from "./layout/UserLayout"
 
 /* ===== Common Components ===== */
 import LoadingSpinner from "./components/LoadingSpinner"
+import Navbar from "./components/Navbar"
 
 const App = () => {
-  let authUser = false
 
 
 
   return (
     <div data-theme="light">
+      {/* If put Navbar here it will be shown on admin pages as well */}
+      {/* <Navbar />  */}
       <Routes>
         {/* ================= USER ROUTES ================= */}
         {/* A <Route> without a path is a layout route */}
@@ -45,7 +49,7 @@ const App = () => {
         </Route>
 
         {/* ================= ADMIN ROUTES ================= */}
-        <Route path="/admin" element={authUser ? <Dashboard /> : <Navigate to={"/login"} />} >
+        <Route path="/admin" element={<Dashboard />} >
           {/* When user visits /admin → redirect */}
           <Route index element={<Navigate to="stats" replace />} />
           <Route path="stats" element={<Stats />} />
@@ -59,6 +63,7 @@ const App = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
 
       </Routes>
+      <Toaster />
     </div>
   )
 }

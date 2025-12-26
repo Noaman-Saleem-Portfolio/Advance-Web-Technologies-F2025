@@ -1,18 +1,28 @@
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
+import api from "../api/axios"
+import toast from "react-hot-toast";
 
 const Navbar = () => {
+    const navigate = useNavigate()
 
+    const handleLogout = async () => {
+        try {
+            await api.post("/auth/logout")
+            toast.success("Logged out successfully");
+            navigate("/")
+        } catch (error) {
+            console.log(error);
 
-
-
-
+        }
+    }
 
     return (
         <div className="navbar bg-base-100 shadow-sm">
-            <div className="container mx-auto px-4 flex">
+            <div className="container  mx-auto  flex items-center">
                 <div className="flex-1">
-                    <Link to={"/"} className="btn btn-ghost text-xl">Tech Mart</Link>
+                    <Link to={"/"} className="text-xl">Tech Mart</Link>
                 </div>
+                {/* right side */}
                 <div className="flex-none">
                     <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
@@ -38,7 +48,7 @@ const Navbar = () => {
                             <div className="w-10 rounded-full">
                                 <img
                                     alt="Tailwind CSS Navbar component"
-                                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                                    src="/user-image-placeholder.avif" />
                             </div>
                         </div>
                         <ul
@@ -51,10 +61,9 @@ const Navbar = () => {
                                 </a>
                             </li>
                             <li><a>Settings</a></li>
-                            <li><button >Logout</button></li>
+                            <li><button onClick={handleLogout} >Logout</button></li>
                         </ul>
                     </div>
-                    <Link to={"/login"}>Login</Link>
 
                 </div>
                 {/* left-side */}

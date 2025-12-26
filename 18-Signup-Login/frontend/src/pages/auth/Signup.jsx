@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import api from "../../api/axios"
 
 const Signup = () => {
+    const navigate = useNavigate()
+
+    const [isError, setIsError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(false)
+
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
@@ -16,6 +22,17 @@ const Signup = () => {
             }
         })
     }
+
+    const handleSubmit = async (e) => {
+        try {
+            const res = await api.post("/auth/signup", formData)
+            navigate("/")
+        } catch (error) {
+            console.log(error);
+            setIsError(true)
+            setErrorMessage(error.response.data.message)
+        }
+    };
 
     return (
         <div className="flex justify-center items-center h-screen">
@@ -32,9 +49,11 @@ const Signup = () => {
                 <label className="label">Password</label>
                 <input name="password" type="password" className="input w-full" onChange={(e) => handleChange(e)} />
 
-                <button className="btn btn-neutral mt-4" >Signup</button>
+                <button className="btn btn-neutral mt-4" onClick={handleSubmit} >Signup</button>
 
                 <Link to={"/login"} className="btn btn-ghost mt-1" type="reset">Already have an account <span className="text-primary">Signin</span></Link>
+
+                {isError && <p className="text-red-500 mt-2">{errorMessage}</p>}
             </fieldset>
             {/* <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
 

@@ -1,13 +1,17 @@
 import { useState } from "react"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import api from "../../api/axios"
 
 const Login = () => {
-
+    const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     })
+
+    const [isError, setIsError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(false)
 
     const handleChange = (e) => {
         setFormData((pre) => {
@@ -18,7 +22,15 @@ const Login = () => {
         })
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        try {
+            const res = await api.post("/auth/login", formData)
+            navigate("/")
+        } catch (error) {
+            console.log(error);
+            setIsError(true)
+            setErrorMessage(error.response.data.message)
+        }
     };
     return (
         <div className="flex justify-center items-center h-screen">
@@ -36,7 +48,7 @@ const Login = () => {
 
                 <Link to={"/signup"} className="btn btn-ghost mt-1" type="reset">Don't have an account <span className="text-primary">Signup</span></Link>
 
-                {/* {isError && <p className="text-red-500 mt-2">{error.response.data.message}</p>} */}
+                {isError && <p className="text-red-500 mt-2">{errorMessage}</p>}
             </fieldset>
             {/* <form className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
                 <fieldset className="fieldset">
