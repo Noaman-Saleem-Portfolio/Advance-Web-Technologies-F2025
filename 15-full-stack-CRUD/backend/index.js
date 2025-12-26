@@ -23,11 +23,33 @@ const app = express()
 connectDB()
 
 // CORS FIX
+// app.use(cors({
+//     origin: "http://localhost:5173",   // your frontend URL
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true
+// }));
+
+// Only for local npm run preview on vite
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:4173',
+]
+
 app.use(cors({
-    origin: "http://localhost:5173",   // your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
+  origin: function (origin, callback) {
+    // allow requests with no origin (e.g. Postman)
+    if (!origin) return callback(null, true)
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}))
+
 
 // Optional: Allow all origins (temporary, not recommended for production)
 // app.use(cors());
