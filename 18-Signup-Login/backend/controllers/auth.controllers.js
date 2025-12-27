@@ -28,9 +28,15 @@ export const signup = async (req, res) => {
         });
 
         if (newUser) {
+            // If newUser.save() fails:
+            //     A JWT may already have been issued
+            //     The token would reference a user that does not exist
+            
             // generate jwt token here
-            generateToken(newUser._id, res);
             await newUser.save();
+
+            // newUser._id exists before await newUser.save() because Mongoose generates the _id value at document instantiation time, not at persistence time.
+            generateToken(newUser._id, res);
 
             res.status(201).json({
                 _id: newUser._id,
